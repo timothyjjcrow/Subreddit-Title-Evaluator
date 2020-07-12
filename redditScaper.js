@@ -1,4 +1,5 @@
-let snoowrap = require('snoowrap');
+const snoowrap = require('snoowrap');
+
 const utils = require('./utils');
 require('dotenv').config()
 
@@ -49,7 +50,7 @@ module.exports = class RedditScraper{
             word = this.onlyAlphabetic(word);
             if(word === '') return;
             // Skip word if found in common word list
-            // if(utils.commonWordExclusions.indexOf(word) !== -1) return;
+            if(utils.stopWords.indexOf(word) !== -1) return;
 
             if (word in this.vault)
                 this.vault[word] = {ups: this.vault[word].ups + title.ups, occ: this.vault[word].occ + 1}; 
