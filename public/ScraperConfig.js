@@ -57,6 +57,7 @@ class ScraperConfig extends React.Component{
             <div>
                 <div className="infoWrapper">
                     <h1>This is titleScraper</h1>
+                    <h4>Created by <a href="https://timothycrowley.me">Tim Crowley</a></h4>
                     <p>Enter a subreddit name and a number of posts to scrape.</p>
                     <p>When you press <b>Scrape</b>, the bot will scrape <b>{this.state.postCount}</b> posts from the subreddit: <b>r/{this.state.subredditName}</b></p>
                     <p>The bot searches the title of each post, counts how often each word occurs, and scores each word based on upvotes.</p>
