@@ -47,7 +47,7 @@ module.exports = class RedditScraper{
             // Mutate word to make more useful
             word = word.toLowerCase();
             word = this.onlyAlphabetic(word);
-
+            if(word === '') return;
             // Skip word if found in common word list
             // if(utils.commonWordExclusions.indexOf(word) !== -1) return;
 
