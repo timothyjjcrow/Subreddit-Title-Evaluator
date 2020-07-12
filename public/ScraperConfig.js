@@ -15,7 +15,7 @@ class ScraperConfig extends React.Component{
     }
 
     handleSubredditNameChange(e){
-        let sub = e.target.value.replace(/[^0-9a-z]/gi, '').trim();
+        let sub = e.target.value.replace(/[^0-9a-z\_]/gi, '').trim();
         this.setState({subredditName: sub, responseInfo: ''})
     }
 
