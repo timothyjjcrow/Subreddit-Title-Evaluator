@@ -11,7 +11,7 @@ module.exports = class RedditScraper{
             clientSecret: process.env.CLIENT_SECRET,
             refreshToken: process.env.REFRESH_TOKEN
         });
-        this.r.config({requestDelay: 1000, warnings: false});
+        // this.r.config({requestDelay: 1000, warnings: false});
     }
 
     async scrapeSubreddit(sub, postCount){
