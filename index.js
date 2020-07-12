@@ -42,6 +42,18 @@ app.get('/scrape/:subreddit/:count', async (req, res, next) => {
     }
 })
 
+// HTTPS Redirect for production
+if (process.env.NODE_ENV !== 'dev') {
+    app.enable('trust proxy');
+    app.use((req, res, next) => {
+        if (req.secure) {
+            next();
+        } else {
+            res.redirect('https://' + req.headers.host + req.url);
+        }
+    });
+  }
+
 // Static Files
 app.use(express.static(path.join(__dirname, './public/')));
 
