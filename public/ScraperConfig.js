@@ -13,7 +13,9 @@ class ScraperConfig extends React.Component{
             loadingElipsis: '',
             timeFrame: "all",
             lastTimeFrame: null,
-            lastSub: null
+            lastSub: null,
+            ratelimitRemaining: '',
+            ratelimitExpiration: ''
         }
     }
     handleOptionChange(e){
@@ -41,13 +43,18 @@ class ScraperConfig extends React.Component{
             this.setState(prevState => ({loadingElipsis: prevState.loadingElipsis.length > 2 ? '' : prevState.loadingElipsis + '.'}))
         }, 500)
 
-        this.setState({scrapeDisabled: true});
+        this.setState({scrapeDisabled: true, responseInfo: ''});
 
         let response = await fetch(`/scrape/${this.state.subredditName}/${this.state.postCount}/${this.state.timeFrame}`);
 
         if(response.status !== 200){
-            let error = await response.text();
-            this.setState({responseInfo: error, scrapeDisabled: false})
+            let error = await response.json();
+            this.setState({
+                responseInfo: error.message,
+                ratelimitRemaining: error.ratelimitRemaining,
+                ratelimitExpiration: error.ratelimitExpiration,
+                scrapeDisabled: false
+            })
         } else{
             let scrapedObject = await response.json();
             this.setState({
@@ -55,7 +62,9 @@ class ScraperConfig extends React.Component{
                 scrapeDisabled: false, 
                 responseInfo: '',
                 lastTimeFrame: scrapedObject.timeFrame,
-                lastSub: scrapedObject.subreddit
+                lastSub: scrapedObject.subreddit,
+                ratelimitRemaining: scrapedObject.ratelimitRemaining,
+                ratelimitExpiration: scrapedObject.ratelimitExpiration
             })
         }
         // Clear loading ellipsis interval
@@ -133,7 +142,7 @@ class ScraperConfig extends React.Component{
                     <input
                         className="formInput"
                         min="1" 
-                        max="10000"
+                        max="5000"
                         step="1"
                         type="number"
                         value={this.state.postCount}
@@ -150,7 +159,18 @@ class ScraperConfig extends React.Component{
                 <div className="formItem" style={{color: "red"}}>
                     {this.state.responseInfo}
                 </div>
-
+                {this.state.ratelimitRemaining !== '' && this.state.ratelimitExpiration !== '' ?
+                    <div>
+                        <h4>Traffic Information</h4>
+                        <div className={`formItem trafficInfo${this.state.ratelimitRemaining === 0 ? ' red' : ''}`}>
+                            API requests left (until reset): {this.state.ratelimitRemaining}
+                        </div>
+                        <div className={`formItem trafficInfo${this.state.ratelimitRemaining === 0 ? ' red' : ''}`}>
+                            Request limit resets @: {(new Date(this.state.ratelimitExpiration)).toLocaleTimeString()}
+                        </div>
+                    </div>
+                    : null
+                }
                 {this.state.wordData ?
                     <div>
                         <div className="tableHeading">

@@ -22,7 +22,7 @@ app.get('/scrape/:subreddit/:count/:timeFrame', async (req, res, next) => {
     try{
        count = Number(req.params.count);
        if(isNaN(count)) throw 'Not a number';
-       if(count > 100000) throw 'Too many posts!  Max 10,000 allowed.';
+       if(count > 5000) throw 'Too many posts!  Max 5,000 allowed.';
        if(count <= 0) throw 'Post count must be >= 1';
        if(!Number.isInteger(count)) throw 'Floating points not allowed';
        if(subreddit.length === 0) throw 'Subreddit cannot be empty';
@@ -31,19 +31,28 @@ app.get('/scrape/:subreddit/:count/:timeFrame', async (req, res, next) => {
     } catch(err){
         console.log(err);
         res.status(400);
-        res.send(err);
+        res.send({message: err});
         return;
     }
 
     try{
         scrapedObject = await rs.scrapeSubreddit(subreddit, count, timeFrame);
     }catch(e){
+        
         let errMsg = 'Something went wrong with subreddit: ' + subreddit + ', or there is currently too much traffic';
+        
         if(e.name == 'SubNotFound') errMsg = e.message;
         if(e.name == 'TrafficError') errMsg = e.message;
+
+        let errorToSend = {
+            message: errMsg,
+            ratelimitRemaining: e.ratelimitRemaining,
+            ratelimitExpiration: e.ratelimitExpiration
+        }
+
         console.log(e);
         res.status(400);
-        res.send(errMsg);
+        res.json(errorToSend);
         return;
     }
 
@@ -57,7 +66,9 @@ app.get('/scrape/:subreddit/:count/:timeFrame', async (req, res, next) => {
         res.json({
             subreddit: subreddit === 'all' ? 'all' : scrapedObject.subreddit,
             timeFrame,
-            data : sortedData
+            data : sortedData,
+            ratelimitRemaining : scrapedObject.ratelimitRemaining,
+            ratelimitExpiration: scrapedObject.ratelimitExpiration,
         });
     }
 })

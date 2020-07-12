@@ -30,8 +30,8 @@ module.exports = class RedditScraper{
                 errorFound = err;
             });
 
-        if(!topPosts || errorFound) throw{name: 'TrafficError', message: 'Too much traffic... Try again in a couple of minutes or seconds idk...!'};
-        if(topPosts.length === 0) throw{name: 'SubNotFound', message: 'Subreddit not found!'};
+        if(!topPosts || errorFound) throw{name: 'TrafficError', message: 'Too much traffic... Request limit resets every 10 minutes', ratelimitRemaining: this.r.ratelimitRemaining, ratelimitExpiration: this.r.ratelimitExpiration};
+        if(topPosts.length === 0) throw{name: 'SubNotFound', message: 'Subreddit not found!', ratelimitRemaining: this.r.ratelimitRemaining, ratelimitExpiration: this.r.ratelimitExpiration};
         // let postsJson = topPosts.toJSON();
         // let jsonString = JSON.stringify(postsJson);
         // fs.writeFile('postJson', jsonString, 'utf8', () => null);
@@ -59,7 +59,7 @@ module.exports = class RedditScraper{
             else return 0
         })
     
-        return {dataArray: titleArray, subreddit};
+        return {dataArray: titleArray, subreddit, ratelimitRemaining: this.r.ratelimitRemaining, ratelimitExpiration: this.r.ratelimitExpiration};
     }
 
     addTitleToVault(vault, title){

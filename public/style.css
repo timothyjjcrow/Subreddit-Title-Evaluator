@@ -47,3 +47,9 @@ tr{
     font-weight: bold;
 }
 
+.trafficInfo{
+    color: green;
+}
+.red{
+    color: red;
+}
