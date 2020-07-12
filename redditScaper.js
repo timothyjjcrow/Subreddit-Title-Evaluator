@@ -11,7 +11,7 @@ module.exports = class RedditScraper{
             clientSecret: process.env.CLIENT_SECRET,
             refreshToken: process.env.REFRESH_TOKEN
         });
-        this.r.config({ continueAfterRatelimitError: true, requestDelay: 1000 });
+        // this.r.config({ continueAfterRatelimitError: true, requestDelay: 1000 });
     }
 
     async scrapeSubreddit(sub, postCount){
