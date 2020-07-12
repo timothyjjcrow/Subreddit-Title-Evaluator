@@ -12,7 +12,7 @@ module.exports = class RedditScraper{
             clientSecret: process.env.CLIENT_SECRET,
             refreshToken: process.env.REFRESH_TOKEN
         });
-        this.r.config({continueAfterRatelimitError: true, requestDelay: 1000});
+        this.r.config({continueAfterRatelimitError: false, requestDelay: 1000});
     }
 
     async scrapeSubreddit(sub, postCount, timeFrame){
@@ -25,14 +25,12 @@ module.exports = class RedditScraper{
         let topPosts = await this.r.getSubreddit(sub).getTop({time})
             .fetchMore({amount: postCount, append: true})
             .catch(err => {
-                if(err instanceof RateLimitError){
-                    console.log('---RATE LIMIT ERROR---')
-                }
-                console.log('in snoowrap catch: ', err)
+                console.log('in snoowrap catch: ', err.message)
                 errorFound = err;
             });
 
         if(errorFound) throw err;
+        if(topPosts.length === 0) throw{name: 'SubNotFound', message: 'Subreddit not found!'};
 
         // let postsJson = topPosts.toJSON();
         // let jsonString = JSON.stringify(postsJson);

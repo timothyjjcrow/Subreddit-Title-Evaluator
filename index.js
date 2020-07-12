@@ -38,9 +38,11 @@ app.get('/scrape/:subreddit/:count/:timeFrame', async (req, res, next) => {
     try{
         scrapedObject = await rs.scrapeSubreddit(subreddit, count, timeFrame);
     }catch(e){
+        let errMsg = 'Something went wrong with subreddit: ' + subreddit + ', or there is currently too much traffic';
+        if(e.name == 'SubNotFound') errMsg = e.message;
         console.log(e);
         res.status(400);
-        res.send('Something went wrong with subreddit: ' + subreddit + ', or there is currently too much traffic');
+        res.send(errMsg);
         return;
     }
 
@@ -52,7 +54,7 @@ app.get('/scrape/:subreddit/:count/:timeFrame', async (req, res, next) => {
     }else{
         res.status(200);
         res.json({
-            subreddit: scrapedObject.subreddit,
+            subreddit: subreddit === 'all' ? 'all' : scrapedObject.subreddit,
             timeFrame,
             data : sortedData
         });
