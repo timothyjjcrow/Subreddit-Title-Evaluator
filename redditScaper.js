@@ -19,6 +19,7 @@ module.exports = class RedditScraper{
         let vault = {};
         let time = "all";
         let errorFound = null;
+        let subreddit;
         if(utils.timeFrames.includes(timeFrame)){
             time = timeFrame;
         }
@@ -35,8 +36,11 @@ module.exports = class RedditScraper{
         // let postsJson = topPosts.toJSON();
         // let jsonString = JSON.stringify(postsJson);
         // fs.writeFile('postJson', jsonString, 'utf8', () => null);
-
-        let subreddit = topPosts[0].subreddit.display_name;
+        try{
+            subreddit = topPosts[0].subreddit.display_name;
+        }catch{
+            subreddit = sub;
+        }
 
         let titles = topPosts.map(post => {
             return {
