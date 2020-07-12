@@ -52,7 +52,7 @@ module.exports = class RedditScraper{
             // Skip word if found in common word list
             if(utils.stopWords.indexOf(word) !== -1) return;
 
-            if (word in this.vault)
+            if (word in vault)
                 vault[word] = {ups: vault[word].ups + title.ups, occ: vault[word].occ + 1}; 
             else{
                 vault[word] = {ups: title.ups, occ: 1};
