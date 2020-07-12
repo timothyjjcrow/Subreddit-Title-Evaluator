@@ -11,7 +11,13 @@ class ScraperConfig extends React.Component{
             responseInfo: '',
             scrapeDisabled: false,
             loadingElipsis: '',
+            timeFrame: "all",
+            lastTimeFrame: null,
+            lastSub: null
         }
+    }
+    handleOptionChange(e){
+        this.setState({timeFrame: e.target.value})
     }
 
     handleSubredditNameChange(e){
@@ -34,14 +40,23 @@ class ScraperConfig extends React.Component{
         this.generateEllipsis = setInterval(() => {
             this.setState(prevState => ({loadingElipsis: prevState.loadingElipsis.length > 2 ? '' : prevState.loadingElipsis + '.'}))
         }, 500)
+
         this.setState({scrapeDisabled: true});
-        let response = await fetch(`/scrape/${this.state.subredditName}/${this.state.postCount}`)
+
+        let response = await fetch(`/scrape/${this.state.subredditName}/${this.state.postCount}/${this.state.timeFrame}`);
+
         if(response.status !== 200){
             let error = await response.text();
             this.setState({responseInfo: error, scrapeDisabled: false})
         } else{
-            let data = await response.json();
-            this.setState({wordData: data.reverse(), scrapeDisabled: false, responseInfo: ''})
+            let scrapedObject = await response.json();
+            this.setState({
+                wordData: scrapedObject.data.reverse(), 
+                scrapeDisabled: false, 
+                responseInfo: '',
+                lastTimeFrame: scrapedObject.timeFrame,
+                lastSub: scrapedObject.subreddit
+            })
         }
         // Clear loading ellipsis interval
         clearInterval(this.generateEllipsis);
@@ -64,7 +79,7 @@ class ScraperConfig extends React.Component{
                     <p>The table is sorted by <b>upvotes</b>, showing the most successful words on <b>r/{this.state.subredditName}</b></p>
                 </div>
                 <div className="formItem">
-                    <label>Subreddit Name</label>
+                    <label className="formItemLabel">Subreddit Name:</label>
                     <input
                         className="formInput"
                         value={this.state.subredditName}
@@ -72,8 +87,47 @@ class ScraperConfig extends React.Component{
                     >
                     </input>
                 </div>
+                <div className="formItem radioSelector"> 
+                    <label className="formItemLabel">Top posts of: </label>
+                    <div className="radio">
+                        <label>
+                            <input type="radio" value="hour" checked={this.state.timeFrame==="hour"} onChange={(e) => this.handleOptionChange(e)} />
+                            hour
+                        </label>
+                    </div>
+                    <div className="radio">
+                        <label>
+                            <input type="radio" value="day" checked={this.state.timeFrame==="day"} onChange={(e) => this.handleOptionChange(e)}/>
+                            day
+                        </label>
+                    </div>
+                    <div className="radio">
+                        <label>
+                            <input type="radio" value="week" checked={this.state.timeFrame==="week"} onChange={(e) => this.handleOptionChange(e)}/>
+                            week
+                        </label>
+                    </div>
+                    <div className="radio">
+                        <label>
+                            <input type="radio" value="month" checked={this.state.timeFrame==="month"} onChange={(e) => this.handleOptionChange(e)}/>
+                            month
+                        </label>
+                    </div>
+                    <div className="radio">
+                        <label>
+                            <input type="radio" value="year" checked={this.state.timeFrame==="year"} onChange={(e) => this.handleOptionChange(e)}/>
+                            year
+                        </label>
+                    </div>
+                    <div className="radio">
+                        <label>
+                            <input type="radio" value="all" checked={this.state.timeFrame==="all"} onChange={(e) => this.handleOptionChange(e)}/>
+                            all
+                        </label>
+                    </div>
+                </div>
                 <div className="formItem">
-                    <label># Posts to Scrape</label>
+                    <label className="formItemLabel"># Posts to Scrape:</label>
                     <input
                         className="formInput"
                         min="1" 
@@ -96,28 +150,34 @@ class ScraperConfig extends React.Component{
                 </div>
 
                 {this.state.wordData ?
-                    <table className="dataTable">
-                        <thead>
-                            <tr>
-                                <th className="tableColumn"></th>
-                                <th className="tableColumn">Word</th>
-                                <th className="tableColumn">Occurrences</th>
-                                <th className="tableColumn">Total Upvotes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {this.state.wordData.map((wordPoint,idx) => {
-                            return (
-                                <tr className="tableColumn" key={wordPoint.word}>
-                                    <td>#{idx + 1}</td>
-                                    <td>{wordPoint.word}</td>
-                                    <td>{wordPoint.occ}</td>
-                                    <td>{wordPoint.ups}</td>
+                    <div>
+                        <div className="tableHeading">
+                            <h4>Subreddit: {this.state.lastSub}</h4>
+                            <h4>Timeframe: {this.state.lastTimeFrame}</h4>
+                        </div>
+                        <table className="dataTable">
+                            <thead>
+                                <tr>
+                                    <th className="tableColumn"></th>
+                                    <th className="tableColumn">Word</th>
+                                    <th className="tableColumn">Occurrences</th>
+                                    <th className="tableColumn">Total Upvotes</th>
                                 </tr>
-                            )
-                        })}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            {this.state.wordData.map((wordPoint,idx) => {
+                                return (
+                                    <tr className="tableColumn" key={wordPoint.word}>
+                                        <td>#{idx + 1}</td>
+                                        <td>{wordPoint.word}</td>
+                                        <td>{wordPoint.occ}</td>
+                                        <td>{wordPoint.ups}</td>
+                                    </tr>
+                                )
+                            })}
+                            </tbody>
+                        </table>
+                    </div>
                     : null
                 }
             </div>

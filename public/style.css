@@ -29,3 +29,21 @@ tr{
     margin-bottom: 20px;
 }
 
+.tableHeading{
+    display: flex;
+    flex-direction: row;
+}
+.tableHeading h4{
+    padding-left: 20px;
+}
+.radioSelector{
+    display: flex;
+    flex-direction: row;
+}
+.radio{
+    margin-left: 20px;
+}
+.formItemLabel{
+    font-weight: bold;
+}
+

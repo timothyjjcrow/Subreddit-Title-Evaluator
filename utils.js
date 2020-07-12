@@ -13,6 +13,9 @@ const stopWords = [
     'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '$', '1',
     '2', '3', '4', '5', '6', '7', '8', '9', '0', '_'];
 
+const timeFrames = ['hour', 'day', 'week', 'month', 'year', 'all'];
+
 module.exports = {
-    stopWords
+    stopWords,
+    timeFrames
 }

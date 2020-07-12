@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv').config();
 const path = require('path');
-
+const utils = require('./utils');
 const RedditScraper = require('./redditScaper');
 let rs = new RedditScraper();
 
@@ -13,10 +13,11 @@ const port = process.env.PORT;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.get('/scrape/:subreddit/:count', async (req, res, next) => {
+app.get('/scrape/:subreddit/:count/:timeFrame', async (req, res, next) => {
     let subreddit = req.params.subreddit.trim();
     let count; 
     let sortedData;
+    let timeFrame = req.params.timeFrame;
 
     try{
        count = Number(req.params.count);
@@ -25,6 +26,8 @@ app.get('/scrape/:subreddit/:count', async (req, res, next) => {
        if(count <= 0) throw 'Post count must be >= 1';
        if(!Number.isInteger(count)) throw 'Floating points not allowed';
        if(subreddit.length === 0) throw 'Subreddit cannot be empty';
+       if(!utils.timeFrames.includes(timeFrame)) throw 'timeFrame invalid';
+        
     } catch(err){
         console.log(err);
         res.status(400);
@@ -33,7 +36,7 @@ app.get('/scrape/:subreddit/:count', async (req, res, next) => {
     }
 
     try{
-        sortedData = await rs.scrapeSubreddit(subreddit, count);
+        sortedData = await rs.scrapeSubreddit(subreddit, count, timeFrame);
     }catch(e){
         console.log(e);
         res.status(400);
@@ -46,7 +49,11 @@ app.get('/scrape/:subreddit/:count', async (req, res, next) => {
         res.send('Subreddit not found');
     }else{
         res.status(200);
-        res.json(sortedData);
+        res.json({
+            subreddit,
+            timeFrame,
+            data : sortedData
+        });
     }
 })
 

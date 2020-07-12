@@ -14,14 +14,22 @@ module.exports = class RedditScraper{
         // this.r.config({requestDelay: 1000, warnings: false});
     }
 
-    async scrapeSubreddit(sub, postCount){
+    async scrapeSubreddit(sub, postCount, timeFrame){
         let vault = {};
-        let topPosts = await this.r.getSubreddit(sub).getTop({time: 'all'})
+        let time = "all";
+        let errorFound = null;
+        if(utils.timeFrames.includes(timeFrame)){
+            time = timeFrame;
+        }
+        let topPosts = await this.r.getSubreddit(sub).getTop({time})
             .fetchMore({amount: postCount, append: true})
             .catch(err => {
                 console.log(err)
+                errorFound = err;
             });
-    
+            
+        if(errorFound) throw err;
+
         let titles = topPosts.map(post => {
             return {
                 title: post.title, 
