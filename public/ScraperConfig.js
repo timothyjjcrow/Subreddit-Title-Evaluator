@@ -41,7 +41,7 @@ class ScraperConfig extends React.Component{
             this.setState({responseInfo: error, scrapeDisabled: false})
         } else{
             let data = await response.json();
-            this.setState({wordData: data.reverse(), scrapeDisabled: false})
+            this.setState({wordData: data.reverse(), scrapeDisabled: false, responseInfo: ''})
         }
         // Clear loading ellipsis interval
         clearInterval(this.generateEllipsis);
