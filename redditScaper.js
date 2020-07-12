@@ -12,7 +12,7 @@ module.exports = class RedditScraper{
             clientSecret: process.env.CLIENT_SECRET,
             refreshToken: process.env.REFRESH_TOKEN
         });
-        this.r.config({continueAfterRatelimitError: false, requestDelay: 1000});
+        // this.r.config({continueAfterRatelimitError: false, requestDelay: 1000});
     }
 
     async scrapeSubreddit(sub, postCount, timeFrame){
@@ -30,8 +30,7 @@ module.exports = class RedditScraper{
                 errorFound = err;
             });
 
-        if(errorFound) throw errorFound;
-        if(!topPosts) throw{name: 'TrafficError', message: 'Too much traffic... Try again in a couple of minutes or seconds idk...!'};
+        if(!topPosts || errorFound) throw{name: 'TrafficError', message: 'Too much traffic... Try again in a couple of minutes or seconds idk...!'};
         if(topPosts.length === 0) throw{name: 'SubNotFound', message: 'Subreddit not found!'};
         // let postsJson = topPosts.toJSON();
         // let jsonString = JSON.stringify(postsJson);
