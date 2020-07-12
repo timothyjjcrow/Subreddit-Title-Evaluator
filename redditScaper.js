@@ -25,13 +25,13 @@ module.exports = class RedditScraper{
         let topPosts = await this.r.getSubreddit(sub).getTop({time})
             .fetchMore({amount: postCount, append: true})
             .catch(err => {
-                console.log('in snoowrap catch: ', err.message)
+                console.log('in snoowrap catch: ', err.message, ' Name: ', err.name);
                 errorFound = err;
             });
 
         if(errorFound) throw errorFound;
+        if(!topPosts) throw{name: 'TrafficError', message: 'Too much traffic... Try again in a couple of minutes or seconds idk...!'};
         if(topPosts.length === 0) throw{name: 'SubNotFound', message: 'Subreddit not found!'};
-
         // let postsJson = topPosts.toJSON();
         // let jsonString = JSON.stringify(postsJson);
         // fs.writeFile('postJson', jsonString, 'utf8', () => null);

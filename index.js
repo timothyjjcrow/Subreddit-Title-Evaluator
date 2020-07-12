@@ -40,6 +40,7 @@ app.get('/scrape/:subreddit/:count/:timeFrame', async (req, res, next) => {
     }catch(e){
         let errMsg = 'Something went wrong with subreddit: ' + subreddit + ', or there is currently too much traffic';
         if(e.name == 'SubNotFound') errMsg = e.message;
+        if(e.name == 'TrafficError') errMsg = e.message;
         console.log(e);
         res.status(400);
         res.send(errMsg);
