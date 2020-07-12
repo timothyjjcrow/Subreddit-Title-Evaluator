@@ -14,8 +14,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.get('/scrape/:subreddit/:count', async (req, res, next) => {
-    let subreddit = req.params.subreddit;
+    let subreddit = req.params.subreddit.trim();
     let count; 
+    let sortedData;
 
     try{
        count = Number(req.params.count);
@@ -31,8 +32,14 @@ app.get('/scrape/:subreddit/:count', async (req, res, next) => {
         return;
     }
 
-    let sortedData = await rs.scrapeSubreddit(subreddit, count);
-    
+    try{
+        sortedData = await rs.scrapeSubreddit(subreddit, count);
+    }catch(e){
+        res.status(400);
+        res.send('Something went wrong with subreddit: ' + subreddit);
+        return;
+    }
+
     if(sortedData.length === 0){
         res.status(400);
         res.send('Subreddit not found');

@@ -16,7 +16,7 @@ class ScraperConfig extends React.Component{
     }
 
     handleSubredditNameChange(e){
-        this.setState({subredditName: e.target.value, responseInfo: ''})
+        this.setState({subredditName: e.target.value.trim(), responseInfo: ''})
     }
 
     handlePostCountNameChange(e){

@@ -15,7 +15,6 @@ module.exports = class RedditScraper{
 
     async scrapeSubreddit(sub, postCount){
         this.vault = {};
-        console.log('scraping: ', sub);
         let topPosts = await this.r.getSubreddit(sub).getTop({time: 'all'})
             .fetchMore({amount: postCount, append: true})
             .catch(err => {
