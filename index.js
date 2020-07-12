@@ -36,7 +36,7 @@ app.get('/scrape/:subreddit/:count', async (req, res, next) => {
         sortedData = await rs.scrapeSubreddit(subreddit, count);
     }catch(e){
         res.status(400);
-        res.send('Something went wrong with subreddit: ' + subreddit);
+        res.send('Something went wrong with subreddit: ' + subreddit + ', or there is currently too much traffic');
         return;
     }
 
