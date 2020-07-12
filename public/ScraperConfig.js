@@ -12,11 +12,11 @@ class ScraperConfig extends React.Component{
             scrapeDisabled: false,
             loadingElipsis: '',
         }
-
     }
 
     handleSubredditNameChange(e){
-        this.setState({subredditName: e.target.value.trim(), responseInfo: ''})
+        let sub = e.target.value.replace(/[^0-9a-z]/gi, '').trim();
+        this.setState({subredditName: sub, responseInfo: ''})
     }
 
     handlePostCountNameChange(e){
