@@ -11,11 +11,11 @@ module.exports = class RedditScraper{
             clientSecret: process.env.CLIENT_SECRET,
             refreshToken: process.env.REFRESH_TOKEN
         });
-        this.vault = {}
+        this.r.config({ continueAfterRatelimitError: true, requestDelay: 1000 });
     }
 
     async scrapeSubreddit(sub, postCount){
-        this.vault = {};
+        let vault = {};
         let topPosts = await this.r.getSubreddit(sub).getTop({time: 'all'})
             .fetchMore({amount: postCount, append: true})
             .catch(err => {
@@ -29,11 +29,11 @@ module.exports = class RedditScraper{
             }
         });
     
-        titles.forEach(title => this.addTitleToVault(title));
+        titles.forEach(title => this.addTitleToVault(vault, title));
         
         // Put vault into array sorted by upvote count
         let titleArray = []
-        Object.keys(this.vault).forEach(key => titleArray.push({word: key, ups: this.vault[key].ups, occ: this.vault[key].occ}))
+        Object.keys(vault).forEach(key => titleArray.push({word: key, ups: vault[key].ups, occ: vault[key].occ}))
         titleArray.sort((a,b) => {
             if(a.ups < b.ups) return -1
             else if(a.ups > b.ups) return 1
@@ -43,7 +43,7 @@ module.exports = class RedditScraper{
         return titleArray;
     }
 
-    addTitleToVault(title){
+    addTitleToVault(vault, title){
         title.title.split(' ').forEach(word => {
             // Mutate word to make more useful
             word = word.toLowerCase();
@@ -53,9 +53,9 @@ module.exports = class RedditScraper{
             if(utils.stopWords.indexOf(word) !== -1) return;
 
             if (word in this.vault)
-                this.vault[word] = {ups: this.vault[word].ups + title.ups, occ: this.vault[word].occ + 1}; 
+                vault[word] = {ups: vault[word].ups + title.ups, occ: vault[word].occ + 1}; 
             else{
-                this.vault[word] = {ups: title.ups, occ: 1};
+                vault[word] = {ups: title.ups, occ: 1};
             }
         });
     }
