@@ -36,7 +36,7 @@ app.get('/scrape/:subreddit/:count/:timeFrame', async (req, res, next) => {
     }
 
     try{
-        sortedData = await rs.scrapeSubreddit(subreddit, count, timeFrame);
+        scrapedObject = await rs.scrapeSubreddit(subreddit, count, timeFrame);
     }catch(e){
         console.log(e);
         res.status(400);
@@ -44,13 +44,15 @@ app.get('/scrape/:subreddit/:count/:timeFrame', async (req, res, next) => {
         return;
     }
 
+    sortedData = scrapedObject.dataArray;
+
     if(sortedData.length === 0){
         res.status(400);
         res.send('Subreddit not found');
     }else{
         res.status(200);
         res.json({
-            subreddit,
+            subreddit: scrapedObject.subreddit,
             timeFrame,
             data : sortedData
         });

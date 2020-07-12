@@ -1,6 +1,7 @@
 const snoowrap = require('snoowrap');
 
 const utils = require('./utils');
+const fs = require('fs');
 require('dotenv').config()
 
 module.exports = class RedditScraper{
@@ -11,7 +12,7 @@ module.exports = class RedditScraper{
             clientSecret: process.env.CLIENT_SECRET,
             refreshToken: process.env.REFRESH_TOKEN
         });
-        // this.r.config({requestDelay: 1000, warnings: false});
+        this.r.config({continueAfterRatelimitError: true, requestDelay: 1000});
     }
 
     async scrapeSubreddit(sub, postCount, timeFrame){
@@ -24,11 +25,20 @@ module.exports = class RedditScraper{
         let topPosts = await this.r.getSubreddit(sub).getTop({time})
             .fetchMore({amount: postCount, append: true})
             .catch(err => {
-                console.log(err)
+                if(err instanceof RateLimitError){
+                    console.log('---RATE LIMIT ERROR---')
+                }
+                console.log('in snoowrap catch: ', err)
                 errorFound = err;
             });
-            
+
         if(errorFound) throw err;
+
+        // let postsJson = topPosts.toJSON();
+        // let jsonString = JSON.stringify(postsJson);
+        // fs.writeFile('postJson', jsonString, 'utf8', () => null);
+
+        let subreddit = topPosts[0].subreddit.display_name;
 
         let titles = topPosts.map(post => {
             return {
@@ -48,7 +58,7 @@ module.exports = class RedditScraper{
             else return 0
         })
     
-        return titleArray;
+        return {dataArray: titleArray, subreddit};
     }
 
     addTitleToVault(vault, title){

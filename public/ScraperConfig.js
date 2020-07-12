@@ -86,6 +86,8 @@ class ScraperConfig extends React.Component{
                         onChange={(e) => this.handleSubredditNameChange(e)}
                     >
                     </input>
+                    <button className="formButton" onClick={()=> this.setState({subredditName:"random"})}>random</button>
+                    {/* setState({key: value}) */}
                 </div>
                 <div className="formItem radioSelector"> 
                     <label className="formItemLabel">Top posts of: </label>
