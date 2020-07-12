@@ -29,7 +29,7 @@ module.exports = class RedditScraper{
                 errorFound = err;
             });
 
-        if(errorFound) throw err;
+        if(errorFound) throw errorFound;
         if(topPosts.length === 0) throw{name: 'SubNotFound', message: 'Subreddit not found!'};
 
         // let postsJson = topPosts.toJSON();
