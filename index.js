@@ -19,10 +19,15 @@ app.get('/scrape/:subreddit/:count', async (req, res, next) => {
 
     try{
        count = Number(req.params.count);
-       if(isNaN(count)) throw new Error();
-    } catch{
+       if(isNaN(count)) throw 'Not a number';
+       if(count > 100000) throw 'Too many posts!  Max 10,000 allowed.';
+       if(count <= 0) throw 'Post count must be >= 1';
+       if(!Number.isInteger(count)) throw 'Floating points not allowed';
+       if(subreddit.length === 0) throw 'Subreddit cannot be empty';
+    } catch(err){
+        console.log(err);
         res.status(400);
-        res.send('Check url parameters, count (number) sent incorrectly');
+        res.send(err);
         return;
     }
 
@@ -30,7 +35,7 @@ app.get('/scrape/:subreddit/:count', async (req, res, next) => {
     
     if(sortedData.length === 0){
         res.status(400);
-        res.json('Subreddit not found');
+        res.send('Subreddit not found');
     }else{
         res.status(200);
         res.json(sortedData);

@@ -1,0 +1,31 @@
+body{
+    font-size: x-large;
+}
+
+th, td{
+    max-width: 150px;
+    word-wrap: break-word;
+}
+
+tr{
+    background-color: rgba(0,0,0,.1);
+}
+
+.infoWrapper{
+    width: 600px;
+    word-wrap: normal;
+}
+
+.formInput{
+    font-size: x-large;
+    margin-left: 20px;
+    width: 200px;
+}
+
+.formButton{
+    font-size: x-large;
+}
+.formItem{
+    margin-bottom: 20px;
+}
+
