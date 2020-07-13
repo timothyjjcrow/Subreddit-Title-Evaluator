@@ -1,5 +1,6 @@
 body{
     font-size: x-large;
+    max-width: 100%;
 }
 
 th, td{
@@ -12,13 +13,11 @@ tr{
 }
 
 .infoWrapper{
-    width: 600px;
     word-wrap: normal;
 }
 
 .formInput{
     font-size: x-large;
-    margin-left: 20px;
     width: 200px;
 }
 
@@ -39,12 +38,14 @@ tr{
 .radioSelector{
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
 }
 .radio{
     margin-left: 20px;
 }
 .formItemLabel{
     font-weight: bold;
+    margin-right: 20px;
 }
 
 .trafficInfo{
