@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/timothyjjcrow/RedditTitleScraper.git"
+    "url": "git+https://github.com/timothyjjcrow/Subreddit-Title-Evaluator.git"
   },
   "author": "Tim Crowley",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/timothyjjcrow/RedditTitleScraper/issues"
+    "url": "https://github.com/timothyjjcrow/Subreddit-Title-Evaluator/issues"
   },
-  "homepage": "https://github.com/timothyjjcrow/RedditTitleScraper#readme",
+  "homepage": "https://github.com/timothyjjcrow/Subreddit-Title-Evaluator#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
